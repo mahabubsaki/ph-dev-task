@@ -3,15 +3,20 @@ const router = require('./routes');
 const globalErrorHandler = require('./errors/global');
 const express = require('express');
 const cors = require('cors');
-// import globalErrorHandler from './middlewares/globalErrorHandler';
-// import router from './routes';
+const cookieParser = require('cookie-parser');
 const app = express();
+const useragent = require('express-useragent');
 
 
 //middleare and parser
-app.use(cors());
+app.use(cors({
+    credentials: true,
+    origin: ['http://localhost:3000']
+}));
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(useragent.express());
 
 
 //Application routes

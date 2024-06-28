@@ -3,6 +3,23 @@
 const mongoose = require('mongoose');
 const envConfigs = require('./configs/env');
 const app = require('./app');
+const { createServer } = require('http');
+const { Server } = require('socket.io');
+const bootstrapSocket = require('./configs/socket');
+
+
+const httpServer = createServer(app);
+
+
+const io = new Server(httpServer, {
+    cors: {
+        origin: 'http://localhost:3000'
+    },
+
+});
+
+
+
 let server;
 
 
@@ -14,9 +31,11 @@ async function bootstrap() {
 
     try {
         await mongoose.connect(envConfigs.dbUri);
-        server = app.listen(envConfigs.port, () => {
+        server = httpServer.listen(envConfigs.port, () => {
             console.log(`Listening to ${envConfigs.port}`);
+            bootstrapSocket(io);
         });
+
     } catch (err) {
         console.log('failed to connect db in server file', err);
     }
