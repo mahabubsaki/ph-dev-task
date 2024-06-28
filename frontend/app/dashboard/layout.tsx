@@ -2,7 +2,9 @@
 import React from 'react';
 import { verifySession } from '../_libs/session';
 import { redirect } from 'next/navigation';
-import AuthProvider from '../_providers/auth.provider';
+import AuthProvider from './_providers/auth.provider';
+import Sidebar from './_components/Sidebar';
+
 
 const DashboardLayout = async ({
     children,
@@ -15,7 +17,18 @@ const DashboardLayout = async ({
     }
     return (
         <AuthProvider>
-            {children}
+            <section className='flex'>
+                <nav className='flex-1 min-h-[100dvh] bg-[#7CB9E8]'>
+                    <div className='sticky h-[100dvh] top-0'>
+                        <Sidebar />
+                    </div>
+                </nav>
+                <section className='flex-[3_3_0%]'>
+                    {children}
+                </section>
+
+            </section>
+
         </AuthProvider>
     );
 };
