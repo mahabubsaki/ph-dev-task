@@ -21,6 +21,12 @@ const bootstrapSocket = (io) => {
             console.log('joining room', room);
             socket.join(room);
         });
+
+        socket.on('new_product', (product) => {
+            console.log('message from client :-', product);
+
+            io.emit('update', "updating the product list");
+        });
         socket.on('join_private', function ({ room, user }) {
             console.log('joining room private', room);
             onlineUsers[socket.id] = user.username;
@@ -44,9 +50,7 @@ const bootstrapSocket = (io) => {
             console.log('disconnected', socket.id);
             const rooms = Array.from(socket.rooms);
             console.log(rooms, 'rooms');
-            console.log(onlineUsers);
 
-            console.log(onlineUsers);
             rooms.forEach((room) => {
                 const clients = getAllConnectedClients(room);
                 clients.forEach((data) => {
@@ -61,12 +65,12 @@ const bootstrapSocket = (io) => {
                 });
             });
             delete onlineUsers[socket.id];
+            socket.leave();
 
         });
-        socket.on('new_product', (product) => {
-            console.log('message from client :-', product);
-
-            io.emit('update', "updating the product list");
+        socket.on('code-change', ({ code, room }) => {
+            console.log('code change', code);
+            socket.in(room).emit('reflact-change', { code });
         });
     });
 
