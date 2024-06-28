@@ -5,13 +5,15 @@ import useAuth from '../_hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { deleteSession } from '@/app/_libs/session';
 import dynamic from 'next/dynamic';
+import { useParams } from 'next/navigation';
 const Status = dynamic(() => import('../_components/force-client/Status'), {
     ssr: false,
 
 });
 
 const Sidebar = () => {
-    const { user, clients } = useAuth();
+    const { user, clients, socket } = useAuth();
+    const { projectID } = useParams();
 
     return (
         <div className='p-5 h-full flex flex-col justify-between'>
@@ -48,7 +50,13 @@ const Sidebar = () => {
 
                     </div>
                 </div>
-                <Button onClick={() => deleteSession()}>Logout</Button>
+                <Button onClick={() => {
+                    socket.emit('leave-room', {
+                        room: projectID
+
+                    });
+                    deleteSession();
+                }}>Logout</Button>
             </div>
 
         </div>

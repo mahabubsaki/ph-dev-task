@@ -68,6 +68,28 @@ const bootstrapSocket = (io) => {
             socket.leave();
 
         });
+        socket.on('leave-room', ({ room }) => {
+            console.log(`leave room the id is ${socket.id}`, room);
+            const rooms = Array.from(socket.rooms);
+            console.log(rooms, 'rooms');
+
+            rooms.forEach((room) => {
+                const clients = getAllConnectedClients(room);
+                clients.forEach((data) => {
+
+                    io.to(data.socketId).emit('user_left', {
+                        clients: clients.filter((client) => client.socketId !== socket.id),
+                        message: `${onlineUsers[socket.id]} left the room`,
+                        username: onlineUsers[socket.id],
+                        socket: socket.id
+                    });
+
+                });
+            });
+            delete onlineUsers[socket.id];
+            socket.leave();
+            socket.leave(room);
+        });
         socket.on('code-change', ({ code, room }) => {
             console.log('code change', code);
             socket.in(room).emit('reflact-change', { code });

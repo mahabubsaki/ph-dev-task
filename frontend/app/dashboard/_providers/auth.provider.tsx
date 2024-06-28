@@ -39,8 +39,9 @@ const AuthProvider = ({ children }: { children: React.ReactNode; }) => {
 
     const handleUserLeft = ({ clients, message, socket, username }) => {
         console.log({ clients, message, socket, username });
+
+        user?.username !== username && toast.error(message);
         setClients(clients);
-        toast.error(message);
 
     };
 
@@ -78,7 +79,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode; }) => {
 
         })();
         return () => {
-
+            // socket.disconnect();
             socket.off('connect', handleConnect);
             socket.off('disconnect', handleDisconnect);
             socket.off('reconnect', handleReconnect);
