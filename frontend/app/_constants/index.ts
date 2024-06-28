@@ -1,10 +1,10 @@
 export const SIGN_UP_DEFAULTS = {
-    username: "",
-    email: "",
-    password: ""
+    username: "saki007",
+    email: "saki@gmail.com",
+    password: "12345678"
 };
 
 export const LOGIN_DEFAULTS = {
-    loginEmail: "",
-    loginPassword: ""
+    loginEmail: "saki@gmail.com",
+    loginPassword: "12345678"
 };
