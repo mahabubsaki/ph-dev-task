@@ -1,6 +1,6 @@
 'use client';
 import { useQueryClient } from '@tanstack/react-query';
-import React, { use, useCallback, useEffect, useState } from 'react';
+import React, { use, useCallback, useEffect, useRef, useState } from 'react';
 import { deleteSession, verifySession } from '../../_libs/session';
 import axiosSecure from '../../_configs/axiosSecureConfig';
 import envConfigs from '../../_configs/envConfigs';
@@ -15,11 +15,15 @@ const socket = io(envConfigs.socketUrl!, {
 });
 
 
+
 const AuthProvider = ({ children }: { children: React.ReactNode; }) => {
     const [user, setUser] = useState(null);
     const [status, setStatus] = useState('online' as 'online' | 'offline' | 'connecting');
     const [clients, setClients] = useState([]);
+    const [code, setCode] = useState('');
+    const backupCodeRef = useRef('');
     const queryClient = useQueryClient();
+    const editorRef = useRef(null);
     const handleConnect = () => setStatus('online');
     const handleDisconnect = () => setStatus('offline');
     const handleReconnect = () => setStatus('connecting');
@@ -28,17 +32,41 @@ const AuthProvider = ({ children }: { children: React.ReactNode; }) => {
         toast.error('Error while connecting to socket');
 
     };
+    useEffect(() => {
 
-    const handleNewUser = ({ clients, message, socket, username }) => {
+        backupCodeRef.current = code;
+    }, [code]);
+    const handleCodeChange = ({ code }) => {
+        setCode(code);
+    };
 
-        // console.log({ clients, message, socket, username });
-        user?.username !== username && toast.success(message);
+    const handleNewUser = ({ clients, message, username, socketId, color }) => {
+
+        // console.log({ clients, message, socket, username, color });
+
+        if (user?.username !== username) {
+            toast.success(message);
+
+
+        }
         setClients(clients);
+
+
+
+        if (socketId !== socket.id) {
+            console.log('emitting code');
+            socket.emit('sync-code', { code: code || backupCodeRef.current, socketId: socketId });
+        }
+
+
+
 
     };
 
+
     const handleUserLeft = ({ clients, message, socket, username }) => {
         console.log({ clients, message, socket, username });
+
 
         user?.username !== username && toast.error(message);
         setClients(clients);
@@ -115,7 +143,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode; }) => {
 
 
     return (
-        <AuthContext.Provider value={{ user, socket, status, clients }}>
+        <AuthContext.Provider value={{ user, socket, status, clients, handleCodeChange, code, setCode, editorRef }}>
             {children}
         </AuthContext.Provider>
     );
