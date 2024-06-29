@@ -9,8 +9,7 @@ const getChat = async (id) => {
     const chat = await Chat.find({
         room: new mongoose.Types.ObjectId(id)
     }).populate('user');
-    console.log(id);
-    console.log(chat, 'chat');
+
     return chat;
 };
 

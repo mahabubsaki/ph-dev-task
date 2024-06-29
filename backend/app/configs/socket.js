@@ -82,9 +82,9 @@ const bootstrapSocket = (io) => {
                 });
 
             });
-            const doc = await Project.findById(room);
-
-            socket.emit('initial-document', { content: doc.document, changes: doc.changes });
+            const doc = await Project.findById(room).populate('user');
+            console.log(doc.user.username, 'doc');
+            socket.emit('initial-document', { content: doc.document, changes: doc.changes, title: doc.title, owner: doc.user.username });
 
         });
         socket.on('editor-change-client', async (change) => {

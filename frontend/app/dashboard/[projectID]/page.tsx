@@ -8,7 +8,7 @@ import Editor from '@monaco-editor/react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Button } from "@/components/ui/button";
-import { MessageCircle } from "lucide-react";
+import { Lock, MessageCircle } from "lucide-react";
 import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import ChatDrawer from "../_components/ChatDrawer";
@@ -36,6 +36,10 @@ const SingleProjectPage = () => {
 
 
     const historyRef = useRef([]);
+    const [documentMeta, setDocumentMeta] = useState({
+        title: '',
+        owner: ''
+    });
 
     const applyChangeLocally = (change) => {
         const { changes, timestamp } = change;
@@ -67,9 +71,10 @@ const SingleProjectPage = () => {
     const scrollRef = useRef(null);
 
 
-    const handleInitialDocument = ({ content, changes }) => {
-
+    const handleInitialDocument = ({ content, changes, title, owner }) => {
+        console.log('initial document', content, changes, title, owner);
         setCode(content);
+        setDocumentMeta({ title, owner });
         historyRef.current = changes;
 
     };
@@ -213,6 +218,10 @@ const SingleProjectPage = () => {
                 </div>
                 <div className="w-[34%] p-5 h-[100dvh] overflow-y-auto">
                     <h1 className="text-2xl font-bold">History Logs</h1>
+                    {documentMeta.title && <div className="flex items-center gap-2">
+                        <Lock />
+                        <p className="text-xl">Title : <span className="font-bold">{documentMeta.title}</span> created by {documentMeta.owner}</p>
+                    </div>}
 
                     {
                         modyFied.map((item, index) => {
