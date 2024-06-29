@@ -74,7 +74,8 @@ const SingleProjectPage = () => {
 
     };
     const handleEditorChange = (change) => {
-        console.log(scrollRef);
+        console.log(change);
+        if (change.room !== projectID) return;
         applyChangeLocally(change);
 
         scrollRef.current.scrollIntoView({ behavior: 'smooth' });
