@@ -18,7 +18,7 @@ const DashboardLayout = async ({
     return (
         <AuthProvider>
             <section className='flex'>
-                <nav className='flex-1 min-h-[100dvh] bg-[#7CB9E8]'>
+                <nav className='flex-1 min-h-[100dvh] bg-[#000435] text-white'>
                     <div className='sticky h-[100dvh] top-0'>
                         <Sidebar />
                     </div>

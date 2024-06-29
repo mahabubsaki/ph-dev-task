@@ -41,6 +41,27 @@ const createProject = userActionWrapper(async (name: string, id: string) => {
 
 });
 
+const sendMessage = userActionWrapper(async ({ message, room }: { message: string, room: string; }, id: string) => {
+    const res = await fetch(envConfigs.apiUrl + '/messages/send', {
+        body: JSON.stringify({ message, room, user: id }),
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        method: 'POST',
+    });
+    const data = await res.json();
+    if (!data.success) return {
+        success: false,
+        message: data.message + " : " + data.error
+    };
+    return {
+        success: data.success,
+        message: data.message,
+    };
+
+});
+
 export {
-    createProject
+    createProject,
+    sendMessage
 };

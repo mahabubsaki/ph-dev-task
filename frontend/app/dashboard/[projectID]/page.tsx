@@ -7,6 +7,11 @@ import { useParams } from "next/navigation";
 import Editor from '@monaco-editor/react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { Button } from "@/components/ui/button";
+import { MessageCircle } from "lucide-react";
+import { Drawer, DrawerContent } from "@/components/ui/drawer";
+import { Input } from "@/components/ui/input";
+import ChatDrawer from "../_components/ChatDrawer";
 const applyEdit = (content, edit) => {
     const { range, rangeLength, text } = edit;
     const startOffset = content.length > 0 ? offsetAt(content, range.startLineNumber, range.startColumn) : 0;
@@ -29,16 +34,19 @@ const SingleProjectPage = () => {
     const { socket, user, handleCodeChange, code, setCode, editorRef } = useAuth();
     const { projectID } = useParams();
 
+
     const historyRef = useRef([]);
 
     const applyChangeLocally = (change) => {
-        const { changes } = change;
+        const { changes, timestamp } = change;
         changes.forEach((changeItem) => {
             const { range, rangeLength, text, owner } = changeItem;
             setCode(prevContent =>
                 applyEdit(prevContent, { range, rangeLength, text })
             );
         });
+        changes[0].timestamp = timestamp;
+
 
         historyRef.current.push(changes[0]);
 
@@ -56,6 +64,7 @@ const SingleProjectPage = () => {
         });
         editorRef.current = editor;
     }
+    const scrollRef = useRef(null);
 
 
     const handleInitialDocument = ({ content, changes }) => {
@@ -65,8 +74,10 @@ const SingleProjectPage = () => {
 
     };
     const handleEditorChange = (change) => {
-
+        console.log(scrollRef);
         applyChangeLocally(change);
+
+        scrollRef.current.scrollIntoView({ behavior: 'smooth' });
 
     };
 
@@ -128,15 +139,16 @@ const SingleProjectPage = () => {
     const separatedChanges = groupChangesByOwnerAndAction(historyRef.current);
 
     const modyFied = separatedChanges.map((item, index) => {
-        const length = item[0].action === 'insert' ? item.length : item.reduce((acc, cur) => acc + cur.rangeLength, 0);
-        const message = item[0].owner + ' ' + 'updated' + ' ' + length + ' characters';
+
+
+        const message = item[0].owner + ' ' + 'updated' + ' ' + item.length + ' characters';
 
         if (item[0].action === 'insert') {
             return {
                 message,
                 code: item[item.length - 1].currentCode,
-                startingTime: item[0].timestamp,
-                endingTime: item[item.length - 1].timestamp
+                startingTime: item[0].timestamp || new Date(),
+
             };
         } else {
 
@@ -150,66 +162,72 @@ const SingleProjectPage = () => {
         }
 
     }).filter(item => !!item);
-    console.log(modyFied);
+
 
     return (
-        <div className="flex">
-            <div className="w-[66%] overflow-hidden">
+        <>
 
-                <Editor
-                    height="100dvh"
-                    defaultLanguage="javascript"
+            <div className="flex">
+                <div className="w-[66%] overflow-hidden">
 
-                    theme={theme}
-                    value={code}
+                    <Editor
+                        height="100dvh"
+                        defaultLanguage="javascript"
 
-                    onChange={(value, event) => {
+                        theme={theme}
+                        value={code}
 
-                        if (event) {
-                            const timestamp = new Date();
+                        onChange={(value, event) => {
 
-                            const changes = event.changes.map(change => ({
-                                range: change.range,
-                                rangeLength: change.rangeLength,
-                                text: change.text,
-                                owner: user.username,
-                                action: change.range.startColumn === change.range.endColumn ? 'insert' : 'delete',
-                                currentCode: value,
-                            }));
+                            if (event) {
+                                const timestamp = new Date();
 
-
-                            const change = {
-                                timestamp,
-                                changes,
-                                document: value,
-                                room: projectID,
-                            };
-
-                            socket.emit('editor-change-client', change);
-                            applyChangeLocally(change);
-                        }
-                    }}
-                    options={{}}
-                    onMount={handleEditorDidMount}
-                />
+                                const changes = event.changes.map(change => ({
+                                    range: change.range,
+                                    rangeLength: change.rangeLength,
+                                    text: change.text,
+                                    owner: user.username,
+                                    action: change.range.startColumn === change.range.endColumn ? 'insert' : 'delete',
+                                    currentCode: value,
+                                }));
 
 
+                                const change = {
+                                    timestamp,
+                                    changes,
+                                    document: value,
+                                    room: projectID,
+                                };
+
+                                socket.emit('editor-change-client', change);
+                                applyChangeLocally(change);
+                                scrollRef.current.scrollIntoView({ behavior: 'smooth' });
+                            }
+                        }}
+                        options={{}}
+                        onMount={handleEditorDidMount}
+                    />
+
+
+                </div>
+                <div className="w-[34%] p-5 h-[100dvh] overflow-y-auto">
+                    <h1 className="text-2xl font-bold">History Logs</h1>
+
+                    {
+                        modyFied.map((item, index) => {
+                            return <div key={index} className="flex gap-2 flex-col">
+                                <p> {item.message} at {new Date(item.startingTime).toLocaleTimeString()}</p>
+                                <SyntaxHighlighter language="javascript" style={dark}>
+                                    {item.code}
+                                </SyntaxHighlighter>
+                            </div>;
+                        })
+                    }
+                    <div ref={scrollRef} />
+                </div>
             </div>
-            <div className="w-[34%] p-5 h-[100dvh] overflow-y-auto">
-                <h1 className="text-2xl font-bold">History Logs</h1>
-
-                {
-                    modyFied.map((item, index) => {
-                        return <div key={index} className="flex gap-2 flex-col">
-                            <p> {item.message}</p>
-                            <SyntaxHighlighter language="javascript" style={dark}>
-                                {item.code}
-                            </SyntaxHighlighter>
-                        </div>;
-                    })
-                }
-            </div>
-        </div>
+            <ChatDrawer />
+        </>
     );
 };
 

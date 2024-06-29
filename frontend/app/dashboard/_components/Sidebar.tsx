@@ -27,7 +27,7 @@ const Sidebar = () => {
                             borderColor: client.color
                         }}>
                             <AvatarImage src="" alt="user-avatar" />
-                            <AvatarFallback>{client?.username?.[0]?.toUpperCase()}</AvatarFallback>
+                            <AvatarFallback className='!text-black'>{client?.username?.[0]?.toUpperCase()}</AvatarFallback>
                         </Avatar>
                         <div>
                             <div className='flex items-center gap-2'><span>{client?.username} {
@@ -45,10 +45,10 @@ const Sidebar = () => {
                 <div className='flex gap-5 items-center'>
                     <Avatar className='size-[50px]'>
                         <AvatarImage src="" alt="user-avatar" />
-                        <AvatarFallback>{user?.username[0]?.toUpperCase()}</AvatarFallback>
+                        <AvatarFallback className='!text-black'>{user?.username[0]?.toUpperCase()}</AvatarFallback>
                     </Avatar>
                     <div>
-                        <div className='flex items-center gap-2'><span>{user?.username} </span>  <Status id={socket?.id} />
+                        <div className='flex items-center gap-2'><span>{user?.username} </span>  <Status />
                         </div>
 
                     </div>

@@ -154,6 +154,13 @@ const bootstrapSocket = (io) => {
             console.log('sync code', code, socketId);
             io.to(socketId).emit('reflact-change', { code: code });
         });
+        socket.on('new_message_client', (message) => {
+
+            socket.broadcast.emit('new_message', {
+                message,
+                socketId: socket.id,
+            });
+        });
     });
 
     io.on('error', (err) => {

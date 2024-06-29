@@ -20,10 +20,6 @@
     "@radix-ui/react-slot": "^1.1.0",
     "@tanstack/react-query": "^5.48.0",
     "@tanstack/react-query-devtools": "^5.48.0",
-    "@uiw/codemirror-extensions-basic-setup": "^4.22.2",
-    "@uiw/codemirror-extensions-events": "^4.22.2",
-    "@uiw/codemirror-theme-xcode": "^4.22.2",
-    "@uiw/react-codemirror": "^4.22.2",
     "axios": "^1.7.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
@@ -35,10 +31,12 @@
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.52.0",
+    "react-syntax-highlighter": "^15.5.0",
     "socket.io-client": "^4.7.5",
     "sonner": "^1.5.0",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
+    "vaul": "^0.9.1",
     "zod": "^3.23.8"
   },
   "devDependencies": {
