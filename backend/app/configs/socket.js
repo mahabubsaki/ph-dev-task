@@ -1,3 +1,4 @@
+const Project = require("../modules/projects/projects.model");
 
 
 const users = {};
@@ -17,6 +18,10 @@ const colors = [
     "#33DCDC", "#DC33FF", "#FFDC33", "#33FFDC", "#DCDC33",
     "#FF4500", "#32CD32", "#1E90FF", "#FF69B4", "#8A2BE2"
 ];
+
+
+
+
 
 
 
@@ -49,9 +54,11 @@ const bootstrapSocket = (io) => {
 
             io.emit('update', "updating the product list");
         });
-        socket.on('join_private', function ({ room, user }) {
+        socket.on('join_private', async function ({ room, user }) {
             console.log('joining room private', room);
-
+            // if (Object.values(users).find((u) => u.username === user.username)) {
+            //     return io.to;
+            // }
 
             users[socket.id] = {};
 
@@ -63,19 +70,34 @@ const bootstrapSocket = (io) => {
 
             socket.join(room);
             const clients = getAllConnectedClients(room);
-            console.log(clients, 'clients');
+
 
             clients.forEach((data) => {
 
                 io.to(data.socketId).emit('new_user', {
                     clients,
                     message: `${user.username} joined the room`,
-                    color: socket.color,
                     username: user.username,
                     socketId: socket.id
                 });
 
             });
+            const doc = await Project.findById(room);
+
+            socket.emit('initial-document', { content: doc.document, changes: doc.changes });
+
+        });
+        socket.on('editor-change-client', async (change) => {
+            // applyChange(change);
+
+            await Project.findByIdAndUpdate(change.room, {
+                $push: { changes: change.changes },
+                $set: { document: change.document }
+            });
+
+
+            socket.broadcast.emit('editor-change', change);
+
 
         });
         socket.on('disconnecting', () => {
@@ -115,7 +137,7 @@ const bootstrapSocket = (io) => {
                         clients: clients.filter((client) => client.socketId !== socket.id),
                         message: `${socket.username} left the room`,
                         username: users[socket.id],
-                        socket: socket.username
+                        socket: socket.id
                     });
 
                 });
