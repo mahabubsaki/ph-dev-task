@@ -116,7 +116,7 @@ const Dashbaord = () => {
 
             <div>
                 <h1 className="text-2xl font-bold">Available Projects</h1>
-                <Projects projects={projects} />
+                <Projects projects={projects} listRefetch={refetch} />
             </div>
 
         </div>

@@ -23,7 +23,7 @@ const ChatDrawer = () => {
 
 
     const { data, refetch } = useQuery({
-        queryKey: ['messages', projectID],
+        queryKey: ['messages', projectID, user?.id],
         queryFn: async () => {
             const res = await axiosSecure.get(envConfigs.publicApiUrl + `/messages/${projectID}?id=${user.id}`);
 
@@ -45,14 +45,16 @@ const ChatDrawer = () => {
         }
 
     });
+    const handleNewMessage = () => {
+        refetch();
+        if (!drawerOpen) setNewMessage(true);
+
+    };
 
     useEffect(() => {
-        socket.on('new_message', ({ socketId }) => {
-            refetch();
-            if (!drawerOpen) setNewMessage(true);
-        });
+        socket.on('new_message', handleNewMessage);
         return () => {
-            socket.off('new_message');
+            socket.off('new_message', handleNewMessage);
         };
     }, []);
 

@@ -1,4 +1,5 @@
-const Project = require("../modules/projects/projects.model");
+const { Project } = require("../modules/projects/projects.model");
+
 
 
 const users = {};
@@ -83,7 +84,7 @@ const bootstrapSocket = (io) => {
 
             });
             const doc = await Project.findById(room).populate('user');
-            console.log(doc.user.username, 'doc');
+
             socket.emit('initial-document', { content: doc.document, changes: doc.changes, title: doc.title, owner: doc.user.username });
 
         });
@@ -159,6 +160,12 @@ const bootstrapSocket = (io) => {
             socket.broadcast.emit('new_message', {
                 message,
                 socketId: socket.id,
+            });
+        });
+        socket.on('new_feedback_client', (message) => {
+            socket.broadcast.emit('new_feedback', {
+                message,
+                socketId: socket.id
             });
         });
     });

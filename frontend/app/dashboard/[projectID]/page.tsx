@@ -7,11 +7,19 @@ import { useParams } from "next/navigation";
 import Editor from '@monaco-editor/react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { Button } from "@/components/ui/button";
-import { Lock, MessageCircle } from "lucide-react";
-import { Drawer, DrawerContent } from "@/components/ui/drawer";
-import { Input } from "@/components/ui/input";
+import { BadgeAlert, Lock, MessageSquare } from "lucide-react";
+
+
 import ChatDrawer from "../_components/ChatDrawer";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { createFeedback } from "../_actions";
+import envConfigs from "@/app/_configs/envConfigs";
+import axiosSecure from "@/app/_configs/axiosSecureConfig";
 const applyEdit = (content, edit) => {
     const { range, rangeLength, text } = edit;
     const startOffset = content.length > 0 ? offsetAt(content, range.startLineNumber, range.startColumn) : 0;
@@ -29,6 +37,30 @@ const offsetAt = (content, lineNumber, column) => {
     }
     return offset + column - 1;
 };
+const groupChangesByOwnerAndAction = (changes) => {
+    const result = [];
+    let currentGroup = [];
+    let currentOwner = changes[0]?.owner;
+    // let currentAction = changes[0]?.action;
+
+    changes.forEach(change => {
+        // change.owner !== currentOwner || change.action !== currentAction
+        if (change.owner !== currentOwner) {
+            result.push(currentGroup);
+            currentGroup = [];
+            currentOwner = change.owner;
+            // currentAction = change.action;
+        }
+        currentGroup.push(change);
+    });
+
+    if (currentGroup.length) {
+        result.push(currentGroup);
+    }
+
+    return result;
+};
+
 
 const SingleProjectPage = () => {
     const { socket, user, handleCodeChange, code, setCode, editorRef } = useAuth();
@@ -36,10 +68,19 @@ const SingleProjectPage = () => {
 
 
     const historyRef = useRef([]);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
+    const [id, setId] = useState(null);
+    const [currentFeedbackId, setCurrentFeedbackId] = useState(null);
+    const [feedbackText, setFeedbackText] = useState('');
     const [documentMeta, setDocumentMeta] = useState({
         title: '',
         owner: ''
     });
+
+    const [theme, setTheme] = useState('vs-dark');
+
+
 
     const applyChangeLocally = (change) => {
         const { changes, timestamp } = change;
@@ -57,9 +98,6 @@ const SingleProjectPage = () => {
 
     };
 
-
-
-    const [theme, setTheme] = useState('vs-dark');
 
     function handleEditorDidMount(editor, monaco) {
         import("monaco-themes/themes/Dracula.json").then((data) => {
@@ -87,6 +125,71 @@ const SingleProjectPage = () => {
 
     };
 
+
+
+
+
+
+
+
+
+    const separatedChanges = groupChangesByOwnerAndAction(historyRef.current);
+
+    const modyFied = separatedChanges.map((item, index) => {
+
+
+        const message = item[0].owner + ' ' + 'updated' + ' ' + item.length + ' characters';
+
+        if (item[0].action === 'insert') {
+            return {
+                message,
+                code: item[item.length - 1].currentCode,
+                startingTime: item[0].timestamp || new Date(),
+                id: item[0]._id
+
+            };
+        }
+
+    }).filter(item => !!item);
+    const { data, refetch } = useQuery({
+        queryKey: ['feedbacks', currentFeedbackId, user?.id],
+        queryFn: async () => {
+            const { data } = await axiosSecure.get(envConfigs.publicApiUrl + `/projects/feedbacks/${currentFeedbackId}?id=${user.id}`);
+            return data?.data || [];
+        },
+        enabled: !!currentFeedbackId,
+        initialData: []
+
+    });
+
+    console.log(data);
+
+
+    const { mutate, isPending } = useMutation({
+        mutationKey: ['feedback'],
+        mutationFn: createFeedback,
+        onSettled: async (data) => {
+            setModalOpen(false);
+            setFeedbackText('');
+            if (!data.success) {
+                return toast.error(data.message);
+            }
+            toast.success(data.message);
+
+
+            refetch();
+            socket.emit('new_feedback_client', 'new feedback created');
+
+        }
+    });
+    const handleFeedback = () => {
+        if (feedbackText.trim() === '') return toast.error('Feedback cannot be empty');
+        mutate({ feedback: feedbackText, changeId: id, project: projectID });
+    };
+    const handleNewFeedback = () => {
+        refetch();
+    };
+
     useEffect(() => {
         if (user) {
             socket.emit('join_private', {
@@ -103,71 +206,17 @@ const SingleProjectPage = () => {
         };
     }, [projectID, user]);
 
-
     useEffect(() => {
         socket.on('initial-document', handleInitialDocument);
         socket.on('editor-change', handleEditorChange);
+        socket.on('new_feedback', handleNewFeedback);
         return () => {
             socket.off('initial-document', handleInitialDocument);
             socket.off('editor-change', handleEditorChange);
+            socket.off('new_feedback', handleNewFeedback);
         };
     }, []);
 
-
-
-
-
-
-    const groupChangesByOwnerAndAction = (changes) => {
-        const result = [];
-        let currentGroup = [];
-        let currentOwner = changes[0]?.owner;
-        // let currentAction = changes[0]?.action;
-
-        changes.forEach(change => {
-            // change.owner !== currentOwner || change.action !== currentAction
-            if (change.owner !== currentOwner) {
-                result.push(currentGroup);
-                currentGroup = [];
-                currentOwner = change.owner;
-                // currentAction = change.action;
-            }
-            currentGroup.push(change);
-        });
-
-        if (currentGroup.length) {
-            result.push(currentGroup);
-        }
-
-        return result;
-    };
-
-    const separatedChanges = groupChangesByOwnerAndAction(historyRef.current);
-
-    const modyFied = separatedChanges.map((item, index) => {
-
-
-        const message = item[0].owner + ' ' + 'updated' + ' ' + item.length + ' characters';
-
-        if (item[0].action === 'insert') {
-            return {
-                message,
-                code: item[item.length - 1].currentCode,
-                startingTime: item[0].timestamp || new Date(),
-
-            };
-        } else {
-
-            // const code = separatedChanges[index - 1].reduce((acc, cur) => acc + cur.text, '').slice(item.reduce((acc, cur) => acc + cur.rangeLength, 0) * -1);
-            // return {
-            //     message,
-            //     code,
-            //     startingTime: item[0].timestamp,
-            //     endingTime: item[item.length - 1].timestamp
-            // };
-        }
-
-    }).filter(item => !!item);
 
 
     return (
@@ -225,11 +274,26 @@ const SingleProjectPage = () => {
 
                     {
                         modyFied.map((item, index) => {
-                            return <div key={index} className="flex gap-2 flex-col">
+                            return <div key={index} className="flex gap-2 flex-col my-5">
                                 <p> {item.message} at {new Date(item.startingTime).toLocaleTimeString()}</p>
                                 <SyntaxHighlighter language="javascript" style={dark}>
                                     {item.code}
                                 </SyntaxHighlighter>
+                                <div className="flex gap-4">
+                                    <Button onClick={() => {
+
+                                        setId(item.id);
+                                        setModalOpen(true);
+                                    }} className="flex-1 flex gap-2 items-center">
+                                        <MessageSquare /> Give Feedback
+                                    </Button>
+                                    <Button onClick={() => {
+                                        setCurrentFeedbackId(item.id);
+                                        setFeedbackModalOpen(true);
+                                    }} className="flex-1 flex gap-2 items-center">
+                                        <BadgeAlert /> Check Feedbacks
+                                    </Button>
+                                </div>
                             </div>;
                         })
                     }
@@ -237,6 +301,53 @@ const SingleProjectPage = () => {
                 </div>
             </div>
             <ChatDrawer />
+            <Dialog open={modalOpen} onOpenChange={(open) => {
+
+                setModalOpen(open);
+                if (!open) {
+                    setFeedbackText('');
+                    setId(null);
+                };
+            }}>
+
+                <DialogContent onInteractOutside={() => setModalOpen(false)} className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>Provide Feedback</DialogTitle>
+
+                    </DialogHeader>
+
+                    <Label htmlFor="project-name">Feedback</Label>
+                    <Input value={feedbackText} onChange={(e) => setFeedbackText(e.target.value)} id="project-name" placeholder="Enter project name" />
+
+                    <DialogFooter>
+                        <Button onClick={handleFeedback} type="button" disabled={isPending}>Submit</Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+            <Dialog open={feedbackModalOpen} onOpenChange={(open) => {
+
+                setFeedbackModalOpen(open);
+                if (!open) {
+                    setId(null);
+                };
+            }}>
+
+                <DialogContent onInteractOutside={() => setFeedbackModalOpen(false)} className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>All Feedbacks for this code</DialogTitle>
+
+                    </DialogHeader>
+
+                    {
+                        data?.map((item, index) => {
+                            return <div key={index} className="flex gap-2 flex-col my-2">
+                                <p>{index + 1}. &quot;{item.feedback}&quot; by {item.user.username} at {new Date(item.createdAt).toLocaleTimeString()}</p>
+                            </div>;
+                        })
+                    }
+                    {data?.length === 0 && <p>No feedbacks yet</p>}
+                </DialogContent>
+            </Dialog>
         </>
     );
 };
