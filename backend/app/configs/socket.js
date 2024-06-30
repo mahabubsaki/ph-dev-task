@@ -100,7 +100,13 @@ const bootstrapSocket = (io) => {
 
             socket.emit('editor-change', {
                 changes: [data.changes[data.changes.length - 1]],
-                timestamp: new Date(),
+                timestamp: data.changes[data.changes.length - 1].timestamp,
+                document: data.document,
+                room: data._id
+            });
+            socket.broadcast.emit('editor-change', {
+                changes: [data.changes[data.changes.length - 1]],
+                timeStamp: data.changes[data.changes.length - 1].timestamp,
                 document: data.document,
                 room: data._id
             });

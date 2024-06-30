@@ -106,7 +106,7 @@ const SingleProjectPage = () => {
             );
         });
         changes[0].timestamp = timestamp;
-        console.log({ change });
+        console.log({ changes });
 
 
         historyRef.current.push(changes[0]);
