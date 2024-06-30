@@ -7,7 +7,7 @@ const verifyJWT = require('../../middlewares/verifyJWT');
 
 userRouter.post('/register', validateRequest(signUpSchema, 'body'), signUpController);
 userRouter.post('/login', validateRequest(loginSchema, 'body'), loginController);
-userRouter.get('/me', validateRequest(meSchema, 'cookies'), verifyJWT, meController);
-
+userRouter.get('/me', verifyJWT, meController);
+// validateRequest(meSchema, 'cookies') 
 
 module.exports = userRouter;    
