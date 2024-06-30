@@ -4,6 +4,7 @@ const User = require('../modules/users/users.model');
 
 const verifyJWT = async (req, res, next) => {
     console.log('in verifyJWT', process.env.NODE_ENV);
+    console.log(req.cookies, 'cookies');
     if (process.env.NODE_ENV) {
 
         req.user = await User.findById(req.query.id);
