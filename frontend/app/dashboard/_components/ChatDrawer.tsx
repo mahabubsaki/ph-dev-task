@@ -14,6 +14,9 @@ import axiosSecure from '@/app/_configs/axiosSecureConfig';
 import envConfigs from '@/app/_configs/envConfigs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+interface MyCustomEventTarget extends EventTarget {
+    [key: string]: any;
+}
 
 const ChatDrawer = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -61,7 +64,6 @@ const ChatDrawer = () => {
 
 
 
-
     return (
         <>
 
@@ -74,7 +76,7 @@ const ChatDrawer = () => {
 
                     <div className="flex-[14_14_0%]  overflow-hidden">
                         <div className="h-full overflow-auto flex flex-col gap-3 px-2">
-                            {data?.map((message) => <div key={message._id} className="flex gap-2 items-center">
+                            {data?.map((message: Record<string, any>) => <div key={message._id} className="flex gap-2 items-center">
 
                                 <div className={`max-w-[50%] gap-1 flex items-center  text-sm  ${message.user.username === user.username ? 'ms-auto flex-row-reverse' : 'me-auto flex-row'} `}>
                                     <p className='text-xs'>{message.user.username}</p>
@@ -96,9 +98,9 @@ const ChatDrawer = () => {
                     </div>
                     <form onSubmit={(e) => {
                         e.preventDefault();
-                        if (e.target.message.value.trim() === '') return toast.error('Message cannot be empty');
-                        mutate({ message: e.target.message.value, room: projectID });
-                        e.target.message.value = '';
+                        if ((e.target as MyCustomEventTarget).message.value.trim() === '') return toast.error('Message cannot be empty');
+                        mutate({ message: (e.target as MyCustomEventTarget).message.value, room: projectID });
+                        (e.target as MyCustomEventTarget).message.value = '';
                     }} className="flex-1 p-2 flex items-center gap-5 ">
                         <Input name='message' required className="h-full flex-[4_4_0%]" placeholder="Type a message" />
                         <Button className="flex-1 h-full" type='submit'>Send</Button>

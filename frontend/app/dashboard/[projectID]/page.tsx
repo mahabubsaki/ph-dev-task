@@ -4,7 +4,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import useAuth from "../_hooks/useAuth";
 import { useParams } from "next/navigation";
-import Editor from '@monaco-editor/react';
+import Editor, { EditorProps, Monaco } from '@monaco-editor/react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { BadgeAlert, Lock, MessageSquare } from "lucide-react";
@@ -20,13 +20,28 @@ import { toast } from "sonner";
 import { createFeedback } from "../_actions";
 import envConfigs from "@/app/_configs/envConfigs";
 import axiosSecure from "@/app/_configs/axiosSecureConfig";
-const applyEdit = (content, edit) => {
-    const { range, rangeLength, text } = edit;
+
+
+interface ChangeItem {
+    range: any;
+    rangeLength: number;
+    text: string;
+    owner: string;
+    timestamp: number;
+}
+
+interface Change {
+    changes: ChangeItem[];
+    timestamp: number;
+}
+
+const applyEdit = (content: string, edit: Record<string, any>) => {
+    const { range, text } = edit;
     const startOffset = content.length > 0 ? offsetAt(content, range.startLineNumber, range.startColumn) : 0;
     const endOffset = offsetAt(content, range.endLineNumber, range.endColumn);
     return `${content.substring(0, startOffset)}${text}${content.substring(endOffset)}`;
 };
-const offsetAt = (content, lineNumber, column) => {
+const offsetAt = (content: string, lineNumber: number, column: number) => {
     let line = 1;
     let offset = 0;
     while (line < lineNumber) {
@@ -37,9 +52,9 @@ const offsetAt = (content, lineNumber, column) => {
     }
     return offset + column - 1;
 };
-const groupChangesByOwnerAndAction = (changes) => {
+const groupChangesByOwnerAndAction = (changes: any[]) => {
     const result = [];
-    let currentGroup = [];
+    let currentGroup: any[] = [];
     let currentOwner = changes[0]?.owner;
     // let currentAction = changes[0]?.action;
 
@@ -67,7 +82,7 @@ const SingleProjectPage = () => {
     const { projectID } = useParams();
 
 
-    const historyRef = useRef([]);
+    const historyRef = useRef<ChangeItem[]>([]);
     const [modalOpen, setModalOpen] = useState(false);
     const [feedbackModalOpen, setFeedbackModalOpen] = useState(false);
     const [id, setId] = useState(null);
@@ -82,11 +97,11 @@ const SingleProjectPage = () => {
 
 
 
-    const applyChangeLocally = (change) => {
+    const applyChangeLocally = (change: Change) => {
         const { changes, timestamp } = change;
-        changes.forEach((changeItem) => {
-            const { range, rangeLength, text, owner } = changeItem;
-            setCode(prevContent =>
+        changes.forEach((changeItem: Record<string, any>) => {
+            const { range, rangeLength, text } = changeItem;
+            setCode((prevContent: string) =>
                 applyEdit(prevContent, { range, rangeLength, text })
             );
         });
@@ -99,29 +114,35 @@ const SingleProjectPage = () => {
     };
 
 
-    function handleEditorDidMount(editor, monaco) {
+    function handleEditorDidMount(editor: any, monaco: Monaco) {
         import("monaco-themes/themes/Dracula.json").then((data) => {
-            monaco.editor.defineTheme("Blackboard", data);
+            monaco.editor.defineTheme("Blackboard", data as any);
             setTheme('Blackboard');
         });
         editorRef.current = editor;
     }
-    const scrollRef = useRef(null);
+    const scrollRef = useRef<null | HTMLDivElement>(null);
 
 
-    const handleInitialDocument = ({ content, changes, title, owner }) => {
+    const handleInitialDocument = ({ content, changes, title, owner }: {
+        content: string;
+        changes: ChangeItem[];
+        title: string;
+        owner: string;
+
+    }) => {
         console.log('initial document', content, changes, title, owner);
         setCode(content);
         setDocumentMeta({ title, owner });
         historyRef.current = changes;
 
     };
-    const handleEditorChange = (change) => {
+    const handleEditorChange = (change: Change) => {
         console.log(change);
-        if (change.room !== projectID) return;
+        if ((change as Record<string, any>).room !== projectID) return;
         applyChangeLocally(change);
 
-        scrollRef.current.scrollIntoView({ behavior: 'smooth' });
+        scrollRef.current && scrollRef.current.scrollIntoView({ behavior: 'smooth' });
 
     };
 
@@ -255,8 +276,8 @@ const SingleProjectPage = () => {
                                 };
 
                                 socket.emit('editor-change-client', change);
-                                applyChangeLocally(change);
-                                scrollRef.current.scrollIntoView({ behavior: 'smooth' });
+                                applyChangeLocally(change as any);
+                                scrollRef.current && scrollRef.current.scrollIntoView({ behavior: 'smooth' });
                             }
                         }}
                         options={{}}
@@ -339,7 +360,7 @@ const SingleProjectPage = () => {
                     </DialogHeader>
 
                     {
-                        data?.map((item, index) => {
+                        data?.map((item: Record<string, any>, index: number) => {
                             return <div key={index} className="flex gap-2 flex-col my-2">
                                 <p>{index + 1}. &quot;{item.feedback}&quot; by {item.user.username} at {new Date(item.createdAt).toLocaleTimeString()}</p>
                             </div>;

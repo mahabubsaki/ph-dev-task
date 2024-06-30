@@ -17,7 +17,7 @@ const socket = io(envConfigs.socketUrl!, {
 
 
 const AuthProvider = ({ children }: { children: React.ReactNode; }) => {
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState<null | Record<string, any>>(null);
     const [status, setStatus] = useState('online' as 'online' | 'offline' | 'connecting');
     const [clients, setClients] = useState([]);
     const [code, setCode] = useState('');
@@ -27,7 +27,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode; }) => {
     const handleConnect = () => setStatus('online');
     const handleDisconnect = () => setStatus('offline');
     const handleReconnect = () => setStatus('connecting');
-    const handleError = (err) => {
+    const handleError = (err: any) => {
         console.log(err, 'error while connecting socket');
         toast.error('Error while connecting to socket');
 
@@ -36,11 +36,11 @@ const AuthProvider = ({ children }: { children: React.ReactNode; }) => {
 
         backupCodeRef.current = code;
     }, [code]);
-    const handleCodeChange = ({ code }) => {
+    const handleCodeChange = ({ code }: { code: string; }) => {
         setCode(code);
     };
 
-    const handleNewUser = ({ clients, message, username, socketId, color }) => {
+    const handleNewUser = ({ clients, message, username, socketId, color }: Record<string, any>) => {
 
         // console.log({ clients, message, socket, username, color });
 
@@ -64,7 +64,7 @@ const AuthProvider = ({ children }: { children: React.ReactNode; }) => {
     };
 
 
-    const handleUserLeft = ({ clients, message, socket, username }) => {
+    const handleUserLeft = ({ clients, message, socket, username }: Record<string, any>) => {
         console.log({ clients, message, socket, username });
 
 

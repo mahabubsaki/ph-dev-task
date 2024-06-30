@@ -1,7 +1,8 @@
 
 
 
-const notFoundErrorHandler = (_, res) => {
+const notFoundErrorHandler = (req, res) => {
+    console.log(req.originalUrl);
 
     if (!res.headersSent) {
         res.status(404).json({
