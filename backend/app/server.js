@@ -13,7 +13,7 @@ const httpServer = createServer(app);
 
 const io = new Server(httpServer, {
     cors: {
-        origin: 'https://ph-dev-task-frontend.vercel.app'
+        origin: ['https://ph-dev-task-frontend.vercel.app', 'https://ph-dev-task-frontend.onrender.com', 'http://localhost:3000']
     },
 
 });
