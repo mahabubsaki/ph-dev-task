@@ -106,6 +106,7 @@ const SingleProjectPage = () => {
             );
         });
         changes[0].timestamp = timestamp;
+        console.log({ change });
 
 
         historyRef.current.push(changes[0]);
@@ -138,8 +139,8 @@ const SingleProjectPage = () => {
 
     };
     const handleEditorChange = (change: Change) => {
-        console.log(change);
-        if ((change as Record<string, any>).room !== projectID) return;
+        console.log(change, 'change');
+        // if ((change as Record<string, any>).room !== projectID) return;
         applyChangeLocally(change);
 
         scrollRef.current && scrollRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -157,7 +158,7 @@ const SingleProjectPage = () => {
     const separatedChanges = groupChangesByOwnerAndAction(historyRef.current);
 
     const modyFied = separatedChanges.map((item, index) => {
-
+        console.log({ item });
 
         const message = item[0].owner + ' ' + 'updated' + ' ' + item.length + ' characters';
 
@@ -172,6 +173,8 @@ const SingleProjectPage = () => {
         }
 
     }).filter(item => !!item);
+    console.log({ modyFied });
+
     const { data, refetch } = useQuery({
         queryKey: ['feedbacks', currentFeedbackId, user?.id],
         queryFn: async () => {
@@ -276,7 +279,7 @@ const SingleProjectPage = () => {
                                 };
 
                                 socket.emit('editor-change-client', change);
-                                applyChangeLocally(change as any);
+                                // applyChangeLocally(change as any);
                                 scrollRef.current && scrollRef.current.scrollIntoView({ behavior: 'smooth' });
                             }
                         }}

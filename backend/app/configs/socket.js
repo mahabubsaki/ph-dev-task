@@ -91,13 +91,19 @@ const bootstrapSocket = (io) => {
         socket.on('editor-change-client', async (change) => {
             // applyChange(change);
 
-            await Project.findByIdAndUpdate(change.room, {
+            const data = await Project.findByIdAndUpdate(change.room, {
                 $push: { changes: change.changes },
                 $set: { document: change.document }
+            }, { new: true });
+            console.log({ data: data.changes });
+
+
+            socket.emit('editor-change', {
+                changes: [data.changes[data.changes.length - 1]],
+                timestamp: new Date(),
+                document: data.document,
+                room: data._id
             });
-
-
-            socket.broadcast.emit('editor-change', change);
 
 
         });
