@@ -6,6 +6,7 @@ const app = require('./app');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 const bootstrapSocket = require('./configs/socket');
+const redisClient = require('./configs/redis');
 
 
 const httpServer = createServer(app);
@@ -31,6 +32,7 @@ async function bootstrap() {
 
     try {
         await mongoose.connect(envConfigs.dbUri);
+        await redisClient.connect();
         server = httpServer.listen(envConfigs.port, () => {
             console.log(`Listening to ${envConfigs.port}`);
             bootstrapSocket(io);

@@ -95,7 +95,7 @@ const bootstrapSocket = (io) => {
                 $push: { changes: change.changes },
                 $set: { document: change.document }
             }, { new: true });
-            console.log({ data: data.changes });
+
 
 
             socket.emit('editor-change', {
