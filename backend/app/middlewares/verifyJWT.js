@@ -2,6 +2,9 @@ const jwt = require('jsonwebtoken');
 const envConfigs = require('../configs/env');
 
 const verifyJWT = async (req, res, next) => {
+    if (process.env.NODE_ENV === 'production') {
+        next(); // cookie not sending from different domains so turning of in production
+    }
     const token = req.cookies?.session;
 
 
