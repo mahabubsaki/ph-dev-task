@@ -11,7 +11,7 @@ const useragent = require('express-useragent');
 //middleare and parser
 app.use(cors({
     credentials: true,
-    origin: ['http://localhost:3000', 'https://ph-dev-task-frontend.vercel.app']
+    origin: ['http://localhost:3000', 'https://ph-dev-task-frontend.vercel.app', 'https://ph-dev-task-frontend.onrender.com']
 }));
 app.use(cookieParser());
 app.use(express.json());
