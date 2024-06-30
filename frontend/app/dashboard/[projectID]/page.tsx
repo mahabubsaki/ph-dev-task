@@ -106,7 +106,7 @@ const SingleProjectPage = () => {
             );
         });
         changes[0].timestamp = timestamp;
-        console.log({ changes });
+
 
 
         historyRef.current.push(changes[0]);
@@ -132,14 +132,14 @@ const SingleProjectPage = () => {
         owner: string;
 
     }) => {
-        console.log('initial document', content, changes, title, owner);
+
         setCode(content);
         setDocumentMeta({ title, owner });
         historyRef.current = changes;
 
     };
     const handleEditorChange = (change: Change) => {
-        console.log(change, 'change');
+
         // if ((change as Record<string, any>).room !== projectID) return;
         applyChangeLocally(change);
 
@@ -158,7 +158,7 @@ const SingleProjectPage = () => {
     const separatedChanges = groupChangesByOwnerAndAction(historyRef.current);
 
     const modyFied = separatedChanges.map((item, index) => {
-        console.log({ item });
+
 
         const message = item[0].owner + ' ' + 'updated' + ' ' + item.length + ' characters';
 
@@ -173,7 +173,7 @@ const SingleProjectPage = () => {
         }
 
     }).filter(item => !!item);
-    console.log({ modyFied });
+
 
     const { data, refetch } = useQuery({
         queryKey: ['feedbacks', currentFeedbackId, user?.id],
@@ -186,7 +186,7 @@ const SingleProjectPage = () => {
 
     });
 
-    console.log(data);
+
 
 
     const { mutate, isPending } = useMutation({

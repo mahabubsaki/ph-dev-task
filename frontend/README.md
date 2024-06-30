@@ -135,10 +135,10 @@ Deployed the backend and frontend to a hosting platform. The backend is deployed
 
 Ensure comprehensive testing to identify and fix bugs. Run the tests using the following commands:
 
-- For backend tests:
+- For backend tests (for now 3 api tests done):
 
   ```sh
-  npm test
+  npm run test
   ```
 
 - For frontend tests:

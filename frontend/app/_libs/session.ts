@@ -42,6 +42,7 @@ const createSession = async ({ email, id, username }: { id: string, email: strin
         maxAge: envConfigs.jwtExpiry,
 
 
+
     });
 
 };
