@@ -1,36 +1,155 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Collabwrite
 
-## Getting Started
+Collabwrite is a collaborative platform where users can manage projects, collaborate on documents in real-time, and provide feedback through discussions.
 
-First, run the development server:
+## Table of Contents
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- [Project Overview](#project-overview)
+- [Features](#features)
+- [Technologies](#technologies)
+- [Installation and Setup](#installation-and-setup)
+  - [Prerequisites](#prerequisites)
+  - [Backend Setup](#backend-setup)
+  - [Frontend Setup](#frontend-setup)
+- [Environment Variables](#environment-variables)
+- [Deployment](#deployment)
+- [Testing](#testing)
+- [Deployment](#deployment)
+- [Contact](#contact)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Project Overview
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+This project aims to provide a platform for teams to collaborate on documents, share feedback, and discuss ideas in real-time. Users can create projects, add documents, and invite team members to collaborate on the documents. The platform also includes a feedback system where users can provide feedback on documents and engage in discussions with other team members.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Technologies
 
-## Learn More
+The project is built using the following technologies:
 
-To learn more about Next.js, take a look at the following resources:
+- **Backend**:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+  - Node.js
+  - Express
+  - MongoDB
+  - Socket.IO
+  - Mongoose
+  - Zod
+  - JWT for authentication
+  - Jest and Supertest for testing
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- **Frontend**:
+  - React
+  - Next.js
+  - Tailwind CSS
+  - JWT for authentication
+  - Socket.IO Client
+  - Monaco Code Editor
+  - Framer Motion
+  - Shadcn
 
-## Deploy on Vercel
+## Features
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. **Project Management**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+   - CRUD operations for Projects.
+   - Connect frontend React components to backend APIs.
+   - Real-time project updates using Socket.IO.
+
+2. **Document Collaboration and Real-Time Editing**
+
+   - Add, edit, and delete documents within projects.
+   - Real-time collaboration using a rich text editor and Socket.IO.
+   - Preserved document History and version control.
+
+3. **Feedback and Discussion**
+
+   - Add and retrieve feedback for documents.
+   - Real-time communication among team members using a discussion forum or chat system integrated with Socket.IO.
+   - Real-time communication among team members using a discussion forum or chat system integrated with Socket.IO.
+
+4. **Enhanced UI/UX**
+   - Usable and aesthetically pleasing interface.
+
+## Installation and Setup
+
+### Prerequisites
+
+- Node.js
+- MongoDB
+
+### Backend Setup
+
+Open backend folder and follow the readme file to get started with backend
+
+### Frontend Setup
+
+1. Navigate to the frontend directory:
+
+   ```sh
+   cd frontend
+   ```
+
+2. Install dependencies:
+
+   ```sh
+   npm install
+   ```
+
+3. Create a `.env` file in the root directory and add the following environment variables:
+
+   ```env
+   API_URL=<deployed-url>/api/v1
+   LOCAL_API_URL=http://localhost:3001/api/v1
+   NEXT_PUBLIC_API_URL=<deployed-url>/api/v1
+   NEXT_PUBLIC_LOCAL_API_URL=http://localhost:3001/api/v1
+   JWT_SECRET=n3AGBjPX7Zyl
+   JWT_EXPIRES_HOUR=12
+   NEXT_PUBLIC_SOCKET_URL_LOCAL=http://localhost:3001
+   NEXT_PUBLIC_SOCKET_URL=<deployed-url>
+   ```
+
+4. Start the frontend server:
+   ```sh
+   npm run dev
+   ```
+
+## Environment Variables
+
+Here is the table of environment variables used in the project:
+
+| Variable                       | Description                   | Example                        |
+| ------------------------------ | ----------------------------- | ------------------------------ |
+| `API_URL`                      | Production API URL            | `<deployed-url>/api/v1`        |
+| `LOCAL_API_URL`                | Local API URL                 | `http://localhost:3001/api/v1` |
+| `NEXT_PUBLIC_API_URL`          | Public Production API URL     | `<deployed-url>/api/v1`        |
+| `NEXT_PUBLIC_LOCAL_API_URL`    | Public Local API URL          | `http://localhost:3001/api/v1` |
+| `JWT_SECRET`                   | JWT Secret for signing tokens | `n3AGBjPX7Zyl`                 |
+| `JWT_EXPIRES_HOUR`             | JWT Expiration time in hours  | `12`                           |
+| `NEXT_PUBLIC_SOCKET_URL_LOCAL` | Public Local Socket URL       | `http://localhost:3001`        |
+| `NEXT_PUBLIC_SOCKET_URL`       | Public Production Socket URL  | `<deployed-url>`               |
+
+## Deployment
+
+Deployed the backend and frontend to a hosting platform. The backend is deployed to Render, and the frontend is deployed to Vercel.
+
+## Testing
+
+Ensure comprehensive testing to identify and fix bugs. Run the tests using the following commands:
+
+- For backend tests:
+
+  ```sh
+  npm test
+  ```
+
+- For frontend tests:
+  ```sh
+  npm run test
+  ```
+
+## Documentation
+
+Refer to the and [Backend Documentation](../backend/Readme.md) for detailed information on the project structure and API endpoints.
+
+## Contact
+
+For any questions or inquiries, please contact [saki007.ph@gmail.com](mailto:saki007.ph@gmail.com).

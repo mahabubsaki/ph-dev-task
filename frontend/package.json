@@ -9,9 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@codemirror/collab": "^6.1.1",
-    "@codemirror/lang-javascript": "^6.2.2",
-    "@codemirror/language": "^6.10.2",
     "@hookform/resolvers": "^3.6.0",
     "@monaco-editor/react": "^4.6.0",
     "@radix-ui/react-avatar": "^1.1.0",

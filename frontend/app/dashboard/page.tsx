@@ -69,11 +69,17 @@ const Dashbaord = () => {
 
 
     }, [user]);
+
+    const handleUpdateProduct = () => {
+
+        refetch();
+    };
+
     useEffect(() => {
-        socket.on('update', (product: string) => {
-            console.log('message from server', product);
-            refetch();
-        });
+        socket.on('update', handleUpdateProduct);
+        return () => {
+            socket.off('update', handleUpdateProduct);
+        };
     }, []);
 
 
