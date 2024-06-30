@@ -4,6 +4,7 @@ const envConfigs = require('../configs/env');
 const verifyJWT = async (req, res, next) => {
     const token = req.cookies?.session;
 
+
     if (!token) {
         console.log('token not found');
         res.statusCode = 401;

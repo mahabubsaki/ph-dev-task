@@ -7,6 +7,6 @@ const verifyJWT = require('../../middlewares/verifyJWT');
 const chatsRouter = express.Router();
 
 chatsRouter.post('/send', validateRequest(chatSchema, 'body'), sendChatController);
-chatsRouter.get('/:room', verifyJWT, getChatController);
+chatsRouter.get('/:room', getChatController);
 
 module.exports = chatsRouter;

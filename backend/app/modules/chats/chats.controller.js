@@ -12,7 +12,7 @@ const sendChatController = catchAsync(async (req, res) => {
 const getChatController = catchAsync(async (req, res) => {
     const id = req.params.room;
     const data = await getChat(id);
-    res.send({ success: true, message: 'Chats retreived successfully', data: data });
+    res.status(200).send({ success: true, message: 'Chats retreived successfully', data: data });
 });
 
 module.exports = {

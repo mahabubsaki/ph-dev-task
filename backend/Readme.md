@@ -2,6 +2,35 @@
 
 Collabrative coding app backend all API
 
+### Setup
+
+1. Clone the repository:
+
+   ```sh
+   git clone <repository_url>
+   cd backend
+   ```
+
+2. Install dependencies:
+
+   ```sh
+   npm install
+   ```
+
+3. Create a `.env` file in the root directory and add the following environment variables:
+
+   ```env
+   MONGODB_URI=<your-db-uri>
+   PORT=3001
+   JWT_SECRET=<your-jwt-secret>
+   ```
+
+4. Start the backend server:
+   ```sh
+   npm run dev
+   `
+   ```
+
 ## Environment Variables
 
 | Variable Name   | Description                | Default Value                  |
