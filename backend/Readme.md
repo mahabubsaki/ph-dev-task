@@ -35,7 +35,7 @@ Collabrative coding app backend all API
 
 4. Start the backend server:
    ```sh
-   npm run dev
+   npm run start
    `
    ```
 

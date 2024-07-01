@@ -35,6 +35,8 @@ The project is built using the following technologies:
   - Zod
   - JWT for authentication
   - Jest and Supertest for testing
+  - Redis for caching
+  - Render for deployment
 
 - **Frontend**:
   - React
@@ -45,6 +47,8 @@ The project is built using the following technologies:
   - Monaco Code Editor
   - Framer Motion
   - Shadcn
+  - Jest and React Testing Library for testing
+  - Vercel for deployment
 
 ## Features
 
@@ -71,43 +75,44 @@ The project is built using the following technologies:
 
 ## Installation and Setup
 
-### Prerequisites
-
-- Node.js
-- MongoDB
-
 ### Backend Setup
 
 Open backend folder and follow the readme file to get started with backend
 
 ### Frontend Setup
 
-1. Navigate to the frontend directory:
+1. Clone the repository:
+
+   ```sh
+   git clone <repository_url>
+   ```
+
+2. Navigate to the frontend directory:
 
    ```sh
    cd frontend
    ```
 
-2. Install dependencies:
+3. Install dependencies:
 
    ```sh
    npm install
    ```
 
-3. Create a `.env` file in the root directory and add the following environment variables:
+4. Create a `.env` file in the root directory and add the following environment variables:
 
    ```env
-   API_URL=<deployed-url>/api/v1
+   API_URL=<deployed-backend-link>/api/v1
    LOCAL_API_URL=http://localhost:3001/api/v1
-   NEXT_PUBLIC_API_URL=<deployed-url>/api/v1
+   NEXT_PUBLIC_API_URL=<deployed-backend-link>/api/v1
    NEXT_PUBLIC_LOCAL_API_URL=http://localhost:3001/api/v1
    JWT_SECRET=n3AGBjPX7Zyl
    JWT_EXPIRES_HOUR=12
    NEXT_PUBLIC_SOCKET_URL_LOCAL=http://localhost:3001
-   NEXT_PUBLIC_SOCKET_URL=<deployed-url>
+   NEXT_PUBLIC_SOCKET_URL=<deployed-backend-link>
    ```
 
-4. Start the frontend server:
+5. Start the frontend server:
    ```sh
    npm run dev
    ```
@@ -116,16 +121,16 @@ Open backend folder and follow the readme file to get started with backend
 
 Here is the table of environment variables used in the project:
 
-| Variable                       | Description                   | Example                        |
-| ------------------------------ | ----------------------------- | ------------------------------ |
-| `API_URL`                      | Production API URL            | `<deployed-url>/api/v1`        |
-| `LOCAL_API_URL`                | Local API URL                 | `http://localhost:3001/api/v1` |
-| `NEXT_PUBLIC_API_URL`          | Public Production API URL     | `<deployed-url>/api/v1`        |
-| `NEXT_PUBLIC_LOCAL_API_URL`    | Public Local API URL          | `http://localhost:3001/api/v1` |
-| `JWT_SECRET`                   | JWT Secret for signing tokens | `n3AGBjPX7Zyl`                 |
-| `JWT_EXPIRES_HOUR`             | JWT Expiration time in hours  | `12`                           |
-| `NEXT_PUBLIC_SOCKET_URL_LOCAL` | Public Local Socket URL       | `http://localhost:3001`        |
-| `NEXT_PUBLIC_SOCKET_URL`       | Public Production Socket URL  | `<deployed-url>`               |
+| Variable                       | Description                   | Example                          |
+| ------------------------------ | ----------------------------- | -------------------------------- |
+| `API_URL`                      | Production API URL            | `<deployed-backend-link>/api/v1` |
+| `LOCAL_API_URL`                | Local API URL                 | `http://localhost:3001/api/v1`   |
+| `NEXT_PUBLIC_API_URL`          | Public Production API URL     | `<deployed-backend-link>/api/v1` |
+| `NEXT_PUBLIC_LOCAL_API_URL`    | Public Local API URL          | `http://localhost:3001/api/v1`   |
+| `JWT_SECRET`                   | JWT Secret for signing tokens | `n3AGBjPX7Zyl`                   |
+| `JWT_EXPIRES_HOUR`             | JWT Expiration time in hours  | `12`                             |
+| `NEXT_PUBLIC_SOCKET_URL_LOCAL` | Public Local Socket URL       | `http://localhost:3001`          |
+| `NEXT_PUBLIC_SOCKET_URL`       | Public Production Socket URL  | `<deployed-backend-link>`        |
 
 ## Deployment
 
@@ -141,7 +146,7 @@ Ensure comprehensive testing to identify and fix bugs. Run the tests using the f
   npm run test
   ```
 
-- For frontend tests:
+- For frontend tests (for now 1 component test done):
   ```sh
   npm run test
   ```

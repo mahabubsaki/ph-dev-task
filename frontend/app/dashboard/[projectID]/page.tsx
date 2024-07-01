@@ -33,6 +33,7 @@ interface ChangeItem {
 interface Change {
     changes: ChangeItem[];
     timestamp: number;
+    document: string;
 }
 
 const applyEdit = (content: string, edit: Record<string, any>) => {
@@ -99,12 +100,14 @@ const SingleProjectPage = () => {
 
     const applyChangeLocally = (change: Change) => {
         const { changes, timestamp } = change;
-        changes.forEach((changeItem: Record<string, any>) => {
-            const { range, rangeLength, text } = changeItem;
-            setCode((prevContent: string) =>
-                applyEdit(prevContent, { range, rangeLength, text })
-            );
-        });
+        // changes.forEach((changeItem: Record<string, any>) => {
+        //     const { range, rangeLength, text } = changeItem;
+        //     setCode((prevContent: string) =>
+        //         applyEdit(prevContent, { range, rangeLength, text })
+        //     );
+        // });
+        console.log({ document: change.document });
+        setCode(change.document);
         changes[0].timestamp = timestamp;
 
 
@@ -114,7 +117,7 @@ const SingleProjectPage = () => {
 
     };
 
-
+    console.log(code);
     function handleEditorDidMount(editor: any, monaco: Monaco) {
         import("monaco-themes/themes/Dracula.json").then((data) => {
             monaco.editor.defineTheme("Blackboard", data as any);
@@ -143,7 +146,7 @@ const SingleProjectPage = () => {
         // if ((change as Record<string, any>).room !== projectID) return;
         applyChangeLocally(change);
 
-        scrollRef.current && scrollRef.current.scrollIntoView({ behavior: 'smooth' });
+        // scrollRef.current && scrollRef.current.scrollIntoView({ behavior: 'smooth' });
 
     };
 

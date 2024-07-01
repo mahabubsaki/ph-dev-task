@@ -97,7 +97,7 @@ const bootstrapSocket = (io) => {
             }, { new: true });
 
 
-
+            console.log(data.document, 'document');
             socket.emit('editor-change', {
                 changes: [data.changes[data.changes.length - 1]],
                 timestamp: data.changes[data.changes.length - 1].timestamp,
