@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { deleteSession } from '@/app/_libs/session';
 import dynamic from 'next/dynamic';
 import { useParams } from 'next/navigation';
+import Link from 'next/link';
 const Status = dynamic(() => import('../_components/force-client/Status'), {
     ssr: false,
 
@@ -20,9 +21,16 @@ const Sidebar = () => {
         <div className='p-5 h-full flex flex-col justify-between'>
             <div>
                 <h1 className='text-center text-xl font-bold'>Welcome to CollabWrite</h1>
+                <div className='my-3'>
+                    {projectID && <Link href={'/dashboard'}>
+                        <Button>
+                            Return to Dashboard
+                        </Button>
+                    </Link>}
+                </div>
                 <div className='flex flex-col gap-2'>
                     <h2 className='text-lg font-semibold text-center mb-2'>Online Users</h2>
-                    {clients.map(({ client }: Record<string, any>) => <div key={client.username} className='flex items-center gap-2'>
+                    {projectID && clients.map(({ client }: Record<string, any>) => <div key={client.username} className='flex items-center gap-2'>
                         <Avatar className='size-[50px] border-4' style={{
                             borderColor: client.color
                         }}>
@@ -37,6 +45,7 @@ const Sidebar = () => {
 
                         </div>
                     </div>)}
+
                 </div>
 
             </div>
