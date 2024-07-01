@@ -22,7 +22,7 @@ To get started with the project, follow these steps:
     MONGODB_URI=<your-db-uri>
     BACKEND_PORT=3001
     JWT_SECRET=<your-jwt-secret>
-    REDIS_URL_LOCAL=redis://
+    REDIS_URL_LOCAL=redis://redis:6379
     REDIS_URL=<deployed redis url>
     API_URL=<deployed-backend-link>/api/v1
     LOCAL_API_URL=http://localhost:3001/api/v1
