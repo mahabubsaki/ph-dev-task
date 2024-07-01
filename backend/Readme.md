@@ -29,7 +29,7 @@ Collabrative coding app backend all API
    MONGODB_URI=<your-db-uri>
    BACKEND_PORT=3001
    JWT_SECRET=<your-jwt-secret>
-   REDIS_URL_LOCAL=redis://127.0.0.1:6379
+   REDIS_URL_LOCAL=redis://redis:6379
    REDIS_URL=<deployed redis url>
    ```
 
@@ -47,7 +47,7 @@ Collabrative coding app backend all API
 | `BACKEND_PORT`    | Port number for the server | `3001`                         |
 | `MONGODB_URI`     | Database URI               | `<your-db-uri>`                |
 | `JWT_SECRET`      | JWT Token Secret           | `<your-jwt-secret>`            |
-| `REDIS_URL_LOCAL` | Local Redis Url            | `redis://127.0.0.1:6379`       |
+| `REDIS_URL_LOCAL` | Local Redis Url            | `redis://redis:6379`       |
 | `REDIS_URL`       | Deployed Redis Url         | `<deployed redis url>`         |
 
 # 📁 Collection: Auth
