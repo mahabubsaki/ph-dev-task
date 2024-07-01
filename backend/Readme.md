@@ -13,7 +13,7 @@ Collabrative coding app backend all API
 1. Clone the repository:
 
    ```sh
-   git clone <repository_url>
+   git clone https://github.com/mahabubsaki/ph-dev-task
    cd backend
    ```
 

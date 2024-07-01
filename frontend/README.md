@@ -84,7 +84,7 @@ Open backend folder and follow the readme file to get started with backend
 1. Clone the repository:
 
    ```sh
-   git clone <repository_url>
+   git clone https://github.com/mahabubsaki/ph-dev-task
    ```
 
 2. Navigate to the frontend directory:
